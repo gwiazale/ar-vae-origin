@@ -48,7 +48,8 @@ class MorphoMnistDataset(MnistDataset):
         self.root_dir = os.path.join(
             os.path.dirname(os.path.dirname(os.path.realpath(__file__))),
             'mnist_data',
-            'plain'
+            'MNIST',
+            'raw'
         )
         self.data_path_str = "-images-idx3-ubyte.gz"
         self.label_path_str = "-labels-idx1-ubyte.gz"

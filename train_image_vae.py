@@ -30,7 +30,7 @@ from imagevae.image_vae_trainer import ImageVAETrainer, MNIST_REG_TYPES, DSPRITE
               help='distribution of the decoder')
 @click.option('--train/--test', default=True,
               help='train or test the specified model')
-@click.option('--log/--no_log', default=False,
+@click.option('--log/--no_log', default=True,
               help='log the results for tensorboard')
 @click.option(
     '--rand',
@@ -89,7 +89,7 @@ def main(
     reg_dim = tuple(reg_dim)
 
     if rand is None:
-        rand = range(0, 10)
+        rand = range(0, 1)
     else:
         rand = [int(rand)]
     for r in rand:

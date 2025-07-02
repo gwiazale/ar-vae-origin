@@ -125,6 +125,7 @@ class ImageVAETrainer(Trainer):
         """
         if self.dataset_type == 'mnist':
             inputs, _, morpho_labels = batch
+            # print(morpho_labels[:5])
             inputs = to_cuda_variable(inputs)
             morpho_labels = to_cuda_variable(morpho_labels)
             return inputs, morpho_labels
@@ -292,10 +293,11 @@ class ImageVAETrainer(Trainer):
             os.path.dirname(self.model.filepath),
             'results_dict.json'
         )
-        if os.path.exists(results_fp):
-            with open(results_fp, 'r') as infile:
-                self.metrics = json.load(infile)
-        else:
+        # if os.path.exists(results_fp):
+        #     with open(results_fp, 'r') as infile:
+        #         self.metrics = json.load(infile)
+        # else:
+        if True:
             batch_size = 128
             _, _, data_loader = self.dataset.data_loaders(batch_size=batch_size)
             latent_codes, attributes, attr_list = self.compute_representations(data_loader)
@@ -312,8 +314,8 @@ class ImageVAETrainer(Trainer):
             self.metrics.update(self.test_model(batch_size=batch_size))
             if self.dataset_type == 'mnist':
                 self.metrics.update(self.get_resnet_accuracy())
-            with open(results_fp, 'w') as outfile:
-                json.dump(self.metrics, outfile, indent=2)
+            # with open(results_fp, 'w') as outfile:
+                # json.dump(self.metrics, outfile, indent=2)
         return self.metrics
 
     def get_resnet_accuracy(self):

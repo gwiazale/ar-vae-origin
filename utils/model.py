@@ -27,7 +27,7 @@ class Model(torch.nn.Module):
         self.filepath = os.path.join(
             os.path.dirname(cur_dir),
             'models',
-            self.__repr__(),
+            # self.__repr__(),
             self.__repr__() + '.pt'
         )
 

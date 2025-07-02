@@ -10,7 +10,7 @@ raw_data/
 dataset_cache/
 data/datasets/
 data/folk_raw_data/
-data/mnist_data
+# data/mnist_data
 data/dsprites
 data/data.zip
 

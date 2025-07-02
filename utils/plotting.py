@@ -3,8 +3,8 @@ import numpy as np
 import matplotlib.pyplot as plt
 import seaborn as sns
 from PIL import Image
-import pypianoroll
-import pretty_midi
+# import pypianoroll
+# import pretty_midi
 import torch
 from torchvision.utils import make_grid
 
@@ -58,7 +58,7 @@ def plot_dim(data, target, filename, dim1=0, dim2=1, xlim=None, ylim=None):
     plt.savefig(filename, format='png', dpi=300)
     plt.close()
     img = Image.open(filename)
-    img_resized = img.resize((485, 360), Image.ANTIALIAS)
+    img_resized = img.resize((485, 360), Image.Resampling.LANCZOS)
     img = convert_rgba_to_rgb(np.array(img_resized))
     return img
 
@@ -304,62 +304,62 @@ def create_box_plot(
     return fig, ax
 
 
-def plot_pianoroll_from_midi(midi_path, attr_labels, attr_str, type):
-    pr_a = pretty_midi.PrettyMIDI(midi_path)
-    piano_roll = pr_a.get_piano_roll().astype('int').T
-    beat_resolution = 100
-    if len(pr_a.instruments) == 0:
-        return
-    note_list = pr_a.instruments[0].notes
-    num_measures = int(piano_roll.shape[0] / (2 * beat_resolution))
-    downbeats = [i * 2 * beat_resolution for i in range(num_measures)]
+# def plot_pianoroll_from_midi(midi_path, attr_labels, attr_str, type):
+#     pr_a = pretty_midi.PrettyMIDI(midi_path)
+#     piano_roll = pr_a.get_piano_roll().astype('int').T
+#     beat_resolution = 100
+#     if len(pr_a.instruments) == 0:
+#         return
+#     note_list = pr_a.instruments[0].notes
+#     num_measures = int(piano_roll.shape[0] / (2 * beat_resolution))
+#     downbeats = [i * 2 * beat_resolution for i in range(num_measures)]
 
-    shaded_piano_roll = np.zeros_like(piano_roll)
-    for i in range(0, shaded_piano_roll.shape[1], 2):
-        shaded_piano_roll[:, i] = 30
-    for i in range(0, shaded_piano_roll.shape[0], 25):
-        shaded_piano_roll[i, :] = 50
-    for note in note_list:
-        start = int(note.start * beat_resolution)
-        pitch = int(note.pitch)
-        piano_roll[start:start+5, pitch-1:pitch+2] = 127
-    shaded_piano_roll[piano_roll != 0] = piano_roll[piano_roll != 0]
+#     shaded_piano_roll = np.zeros_like(piano_roll)
+#     for i in range(0, shaded_piano_roll.shape[1], 2):
+#         shaded_piano_roll[:, i] = 30
+#     for i in range(0, shaded_piano_roll.shape[0], 25):
+#         shaded_piano_roll[i, :] = 50
+#     for note in note_list:
+#         start = int(note.start * beat_resolution)
+#         pitch = int(note.pitch)
+#         piano_roll[start:start+5, pitch-1:pitch+2] = 127
+#     shaded_piano_roll[piano_roll != 0] = piano_roll[piano_roll != 0]
 
-    figsize = (16, 2)
-    f, (ax1, ax2) = plt.subplots(1, 2, figsize=figsize, gridspec_kw={'width_ratios': [6, 1]})
-    pypianoroll.plot_pianoroll(
-        ax1,
-        shaded_piano_roll,
-        downbeats=downbeats,
-        beat_resolution=2 * beat_resolution,
-        xtick='beat',
-    )
-    f.set_facecolor('white')
-    if type == 'folk':
-        ax1.set_ylim(55, 84)
-    elif type == 'bach':
-        ax1.set_ylim(55, 90)
-    ax1.set_ylabel('Pitch')
-    ax1.set_yticklabels([])
-    ax1.set_yticks([])
-    plt.tight_layout()
-    ax1.set_xlabel('')
-    save_path = os.path.join(
-        os.path.dirname(midi_path),
-        f'{os.path.splitext(os.path.basename(midi_path))[0]}.png'
-    )
-    x = [n + 1 for n in range(attr_labels.size)]
-    # ax2.bar(x, attr_labels, color='k')
-    ax2.plot(x, attr_labels, 'o', color='k', markersize=7)
-    ax2.set_ylabel(attr_str)
-    # if attr_str == 'contour':
-    #     ax2.set_ylim(-0.7, 0.7)
-    # else:
-    #     ax2.set_ylim(-0.1, 0.5)
-    ax2.set_yticklabels([])
-    ax2.set_xticks(np.arange(1, num_measures+1))
-    plt.savefig(save_path, dpi=500)
-    plt.close()
+#     figsize = (16, 2)
+#     f, (ax1, ax2) = plt.subplots(1, 2, figsize=figsize, gridspec_kw={'width_ratios': [6, 1]})
+#     pypianoroll.plot_pianoroll(
+#         ax1,
+#         shaded_piano_roll,
+#         downbeats=downbeats,
+#         beat_resolution=2 * beat_resolution,
+#         xtick='beat',
+#     )
+#     f.set_facecolor('white')
+#     if type == 'folk':
+#         ax1.set_ylim(55, 84)
+#     elif type == 'bach':
+#         ax1.set_ylim(55, 90)
+#     ax1.set_ylabel('Pitch')
+#     ax1.set_yticklabels([])
+#     ax1.set_yticks([])
+#     plt.tight_layout()
+#     ax1.set_xlabel('')
+#     save_path = os.path.join(
+#         os.path.dirname(midi_path),
+#         f'{os.path.splitext(os.path.basename(midi_path))[0]}.png'
+#     )
+#     x = [n + 1 for n in range(attr_labels.size)]
+#     # ax2.bar(x, attr_labels, color='k')
+#     ax2.plot(x, attr_labels, 'o', color='k', markersize=7)
+#     ax2.set_ylabel(attr_str)
+#     # if attr_str == 'contour':
+#     #     ax2.set_ylim(-0.7, 0.7)
+#     # else:
+#     #     ax2.set_ylim(-0.1, 0.5)
+#     ax2.set_yticklabels([])
+#     ax2.set_xticks(np.arange(1, num_measures+1))
+#     plt.savefig(save_path, dpi=500)
+#     plt.close()
 
 
 def save_gif(image_tensor, save_filepath, delay=100):

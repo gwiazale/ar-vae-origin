@@ -11,7 +11,7 @@ from tensorboardX import SummaryWriter
 import matplotlib.pyplot as plt
 
 from utils.helpers import to_numpy
-
+import json
 
 class Trainer(ABC):
     """
@@ -50,9 +50,11 @@ class Trainer(ABC):
             st = datetime.datetime.fromtimestamp(ts).strftime(
                 '%Y-%m-%d_%H:%M:%S'
             )
+            print('path to writer')
+            print(os.path.join(os.path.dirname(os.path.realpath(__file__)), 'runs/'  + st))
             # configure tensorboardX summary writer
             self.writer = SummaryWriter(
-                logdir=os.path.join('runs/' + self.model.__repr__() + st)
+                logdir=os.path.join(os.path.dirname(os.path.dirname(os.path.realpath(__file__))), 'runs')#+ self.model.__repr__() + st
             )
 
         # get dataloaders
@@ -109,6 +111,9 @@ class Trainer(ABC):
                 'mean_accuracy_val': mean_accuracy_val
             }
             self.print_epoch_stats(**data_element)
+            metrics = self.compute_eval_metrics()
+            print(f'Epoch {epoch_index} ar_vae_metrics')
+            print(json.dumps(metrics, indent=2))
 
             # save model
             self.model.save()
@@ -145,7 +150,6 @@ class Trainer(ABC):
             mean_loss += to_numpy(loss.mean())
             if accuracy is not None:
                 mean_accuracy += to_numpy(accuracy)
-
         mean_loss /= len(data_loader)
         mean_accuracy /= len(data_loader)
         return (
@@ -197,6 +201,10 @@ class Trainer(ABC):
         :param train: bool, True is backward pass is to be performed
         :return: scalar loss value, scalar accuracy value
         """
+        pass
+
+    @abstractmethod
+    def compute_eval_metrics(self):
         pass
 
     @abstractmethod
