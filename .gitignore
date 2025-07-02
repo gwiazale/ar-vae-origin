@@ -1,7 +1,7 @@
 # Folders
 runs/
 good_models/
-models/
+# models/
 plots/
 saved_midi/
 saved_midi2/
