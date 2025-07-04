@@ -28,7 +28,7 @@ from imagevae.image_vae_trainer import ImageVAETrainer, MNIST_REG_TYPES, DSPRITE
               help='parameter for controlling the spread')
 @click.option('--dec_dist', default='bernoulli',
               help='distribution of the decoder')
-@click.option('--train/--test', default=True,
+@click.option('--train/--test', default=False,
               help='train or test the specified model')
 @click.option('--log/--no_log', default=True,
               help='log the results for tensorboard')
@@ -127,30 +127,30 @@ def main(
         for sample_id in [0, 1, 4]:
             trainer.create_latent_gifs(sample_id=sample_id)
 
-        # interp_dict = metrics['interpretability']
-        # if dataset_type == 'mnist':
-        #     attr_dims = [interp_dict[attr][0] for attr in trainer.attr_dict.keys() if attr != 'digit_identity']
-        #     non_attr_dims = [a for a in range(trainer.model.z_dim) if a not in attr_dims]
-        #     for attr in interp_dict.keys():
-        #         dim1 = interp_dict[attr][0]
-        #         trainer.plot_latent_surface(
-        #             attr,
-        #             dim1=dim1,
-        #             dim2=non_attr_dims[-1],
-        #             grid_res=0.05,
-        #         )
+        interp_dict = metrics['interpretability']
+        if dataset_type == 'mnist':
+            attr_dims = [interp_dict[attr][0] for attr in trainer.attr_dict.keys() if attr != 'digit_identity']
+            non_attr_dims = [a for a in range(trainer.model.z_dim) if a not in attr_dims]
+            for attr in interp_dict.keys():
+                dim1 = interp_dict[attr][0]
+                trainer.plot_latent_surface(
+                    attr,
+                    dim1=dim1,
+                    dim2=non_attr_dims[-1],
+                    grid_res=0.05,
+                )
 
-        # # plot interpolations
-        # trainer.plot_latent_reconstructions()
-        # for attr_str in trainer.attr_dict.keys():
-        #     if attr_str == 'digit_identity' or attr_str == 'color':
-        #         continue
-        #     trainer.plot_latent_interpolations(attr_str)
+        # plot interpolations
+        trainer.plot_latent_reconstructions()
+        for attr_str in trainer.attr_dict.keys():
+            if attr_str == 'digit_identity' or attr_str == 'color':
+                continue
+            trainer.plot_latent_interpolations(attr_str)
 
-        # if dataset_type == 'mnist':
-        #     trainer.plot_latent_interpolations2d('slant', 'thickness')
-        # else:
-        #     trainer.plot_latent_interpolations2d('posx', 'posy')
+        if dataset_type == 'mnist':
+            trainer.plot_latent_interpolations2d('slant', 'thickness')
+        else:
+            trainer.plot_latent_interpolations2d('posx', 'posy')
 
 
 if __name__ == '__main__':

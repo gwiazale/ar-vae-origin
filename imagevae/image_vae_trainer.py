@@ -298,7 +298,7 @@ class ImageVAETrainer(Trainer):
         #         self.metrics = json.load(infile)
         # else:
         if True:
-            batch_size = 128
+            batch_size = 64
             _, _, data_loader = self.dataset.data_loaders(batch_size=batch_size)
             latent_codes, attributes, attr_list = self.compute_representations(data_loader)
             interp_metrics = compute_interpretability_metric(
