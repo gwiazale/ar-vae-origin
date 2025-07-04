@@ -124,15 +124,18 @@ def main(
         metrics = trainer.compute_eval_metrics()
         print(json.dumps(metrics, indent=2))
 
-        for sample_id in [0, 1, 4]:
-            trainer.create_latent_gifs(sample_id=sample_id)
+        # for sample_id in [0, 1, 4]:
+        #     trainer.create_latent_gifs(sample_id=sample_id)
 
         interp_dict = metrics['interpretability']
+        print(f'trainer.attr_dict.keys() = {trainer.attr_dict.keys()}')
         if dataset_type == 'mnist':
             attr_dims = [interp_dict[attr][0] for attr in trainer.attr_dict.keys() if attr != 'digit_identity']
             non_attr_dims = [a for a in range(trainer.model.z_dim) if a not in attr_dims]
             for attr in interp_dict.keys():
                 dim1 = interp_dict[attr][0]
+                if attr == 'mean':
+                    continue
                 trainer.plot_latent_surface(
                     attr,
                     dim1=dim1,
@@ -143,7 +146,7 @@ def main(
         # plot interpolations
         trainer.plot_latent_reconstructions()
         for attr_str in trainer.attr_dict.keys():
-            if attr_str == 'digit_identity' or attr_str == 'color':
+            if attr_str == 'digit_identity' or attr_str == 'color' or attr_str == 'mean':
                 continue
             trainer.plot_latent_interpolations(attr_str)
 
